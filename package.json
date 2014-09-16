@@ -1,0 +1,30 @@
+{
+  "name": "epm-middleware",
+  "version": "0.0.1",
+  "description": "An expressjs middleware for EPM",
+  "main": "index.js",
+  "dependencies": {
+    "epm": "^0.3.19",
+    "express": "^4.9.0",
+    "mkdirp": "^0.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dte-ba/epm-middleware.git"
+  },
+  "keywords": [
+    "epm",
+    "express",
+    "middleware"
+  ],
+  "author": "Dte-ba",
+  "license": "GPL v3",
+  "bugs": {
+    "url": "https://github.com/Dte-ba/epm-middleware/issues"
+  },
+  "homepage": "https://github.com/Dte-ba/epm-middleware"
+}
