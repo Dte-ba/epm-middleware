@@ -20,7 +20,7 @@ module.exports = function(ops) {
     fs.mkdirSync(ops.path);
   }
 
-  server = Epm.createServer(ops.path);
+  server = Epm.createServer(ops.path, { engines: engines });
 
   app.listenRepositories = function(ops, fn) {
     if (typeof ops === 'function'){
@@ -36,14 +36,6 @@ module.exports = function(ops) {
         return fn && fn(err);
       })
       .once('listen', function(info){
-        // use the engines
-        Object.keys(server.repos).forEach(function(rname){
-          var r = server.repos[rname];
-          engines.forEach(function(e){
-            r.use(e.name, e.engine);
-          });
-        });
-
         return fn && fn(null, info);
       });
     server.listen(ops);
@@ -107,15 +99,25 @@ module.exports = function(ops) {
       return writeError({ error: 'Unknown repository' });
     }
 
+    if ((Object.keys(req.query).length <= 1 && req.query.repo !== undefined)) {
+      r.packages.execQuery("all", function(err, data){ 
+        if (err) return writeError(err);
+
+        res.json(data);
+      });
+
+      return;
+    }
+
     var resolver = r.createResolver();
 
     resolver
       .on('error', function(err){
-        next(err);
+        return writeError(err);
       })
       .on('complete', function(result){
         if (!writeResolved(result, res)){
-          next(new Error('Unknown request'));
+          writeError(new Error('Unknown request'));
         }
       })
       .request(req);
@@ -124,7 +126,10 @@ module.exports = function(ops) {
 
   return app;
 
-  function writeError(error, res){
+  function writeError(error, res, statusCode){
+    statusCode = statusCode || 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.writeHead(statusCode);
     return res.json(error);
   }
 
