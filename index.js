@@ -43,10 +43,28 @@ module.exports = function(ops) {
             r.use(e.name, e.engine);
           });
         });
+
         return fn && fn(null, info);
       });
     server.listen(ops);
   };
+
+  app.use(function(req, res, next){
+    if ('POST' != req.method.toUpperCase() && 'GET' != req.method.toUpperCase() && 'HEAD' != req.method.toUpperCase()) { return next(); }
+
+    var reponame = req.query.repo;
+
+    if (reponame === undefined) {
+      reponame = defaultRepo;
+    }
+    process.REPOSITORY = server.repos[reponame];
+    
+    if (!process.REPOSITORY) {
+      console.warn('Unknown repository');
+    }
+
+    return next();
+  });
 
   app.get('/repository/:name?', function(req, res, next){
     var name = req.params.name;
@@ -72,7 +90,7 @@ module.exports = function(ops) {
     });
   });
 
-  app.get('/package/:reponame?', function(req, res, next){
+  app.get('/package', function(req, res, next){
     var reponame = req.params.reponame;
 
     if (server.listening === undefined){
@@ -83,16 +101,10 @@ module.exports = function(ops) {
       return writeError({ error: 'The server not have repositories' });
     }
 
-    if (!reponame && defaultRepo !== undefined) {
-      reponame = defaultRepo;
-    } else {
-      reponame = Object.keys(server.repos)[0];
-    }
-
-    var r = server.repos[reponame];
+    var r = process.REPOSITORY;
 
     if (r === undefined){
-      return writeError({ error: 'The repository ' + reponame + ' doesn\'t exists' });
+      return writeError({ error: 'Unknown repository' });
     }
 
     var resolver = r.createResolver();
