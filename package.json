@@ -1,6 +1,6 @@
 {
   "name": "epm-middleware",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "An expressjs middleware for EPM",
   "main": "index.js",
   "dependencies": {
