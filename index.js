@@ -3,6 +3,7 @@
 var Epm = require('epm');
 var express = require('express');
 var fs = require('fs');
+var path = require('path');
 
 module.exports = function(ops) {
   var app = express();
