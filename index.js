@@ -1,11 +1,12 @@
-'use strict';
-
-var Epm = require('epm');
-var express = require('express');
-var fs = require('fs');
-var path = require('path');
-
 module.exports = function(ops) {
+  "use strict";  
+
+  var Epm = require('epm');
+  var express = require('express');
+  var fs = require('fs');
+  var path = require('path');
+  var _ = require('underscore');
+
   var app = express();
   var server;
 
@@ -25,11 +26,11 @@ module.exports = function(ops) {
 
   app.listenRepositories = function(ops, fn) {
     if (typeof ops === 'function'){
-      fn = ops 
-      ops = {}
+      fn = ops;
+      ops = {};
     }
 
-    ops = ops || {}
+    ops = ops || {};
     var port = ops.port || 3220;
 
     server
@@ -178,7 +179,7 @@ module.exports = function(ops) {
         if ( idxhtml === undefined){
           // index.html doesn't exists 
           // any html
-          idxhtml = (htmls.length > 0 ? htmls[0] : undefined)
+          idxhtml = (htmls.length > 0 ? htmls[0] : undefined);
         }
 
         var route = '/content/' + info.uid;
@@ -203,25 +204,40 @@ module.exports = function(ops) {
 
     function extractBasepath(entries) {
 
-      var dirs = entries.map(function(e){ return path.dirname(e); });
+      var dirs = entries.map(function(e){ 
+        return path.dirname(e); 
+      });
 
-      var sdirs = dirs.map(function(d){ return d.split('\\')});
+      var sdirs = dirs.map(function(d){ 
+        return d.split('\\');
+      });
 
       var idx = 0;
       var curr;
       var root = '';
       var eq;
 
+      var haveFunc = function(sd){ 
+        return sd.length > idx; 
+      };
+
+      var eqFunc = function(i){
+        return curr === i;
+      };
+
+      var eqmapFunc = function(a){ 
+        return a[idx]; 
+      };
+
       do {
 
         curr = sdirs[0][idx];
 
-        var have = _.all(sdirs, function(sd){ return sd.length > idx; });
+        var have = _.all(sdirs, haveFunc);
+
         eq = have;
         if (have === true){
-          eq = _.all(sdirs.map(function(a){ return a[idx]; }), function(i){
-            return curr === i;
-          });
+          eq = _.all(sdirs.map(eqmapFunc), eqFunc);
         }
 
         if(eq) {
@@ -230,7 +246,7 @@ module.exports = function(ops) {
 
         idx++;
 
-      } while(eq === true)
+      } while(eq === true);
 
       return root;
     }
