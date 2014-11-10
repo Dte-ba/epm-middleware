@@ -6,6 +6,8 @@ module.exports = function(ops) {
   var fs = require('fs');
   var path = require('path');
   var _ = require('underscore');
+  var send = require('send');
+  var mime = require('mime');
 
   var app = express();
   
@@ -153,13 +155,17 @@ module.exports = function(ops) {
       return true;
     } else if (info.type === 'file') {
       // content || assets
-      res.download(info.filename);
+      //res.setHeader('Content-Type', mime.lookup(info.filename));
+      res.attachment(info.filename);
+      res.sendFile(info.filename);
 
       return true;
     } else if (info.type === 'files') {
       // content with mutiple files
       if (info.files.length === 1){
-        res.download(info.files[0].filename);
+        //res.setHeader('Content-Type', mime.lookup( info.files[0].filename) );
+        res.attachment(info.files[0].filename);
+        res.sendFile(info.files[0].filename);
       } else {
         var bpath = extractBasepath(info.files.map(function(f){ return f.filename; }));
 
@@ -197,7 +203,9 @@ module.exports = function(ops) {
         if (item.index !== undefined){
           r += '/' + item.index;
         }
+        
         res.redirect(r);
+        //res.sendFile(idxhtml, {root: bpath });
       }
 
       return true;
