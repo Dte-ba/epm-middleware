@@ -8,6 +8,10 @@ module.exports = function(ops) {
   var _ = require('underscore');
 
   var app = express();
+  
+  // initialize the cache
+  app.cacheContent = {};
+
   var server;
 
   ops = ops || {};
@@ -140,7 +144,6 @@ module.exports = function(ops) {
    */
   function writeResolved(info, res, statusCode){
     statusCode = statusCode || 200;
-
     if (info.type === 'json'){
 
       res.setHeader('Content-Type', 'application/json');
@@ -150,13 +153,13 @@ module.exports = function(ops) {
       return true;
     } else if (info.type === 'file') {
       // content || assets
-      res.sendFile(info.filename);
+      res.download(info.filename);
 
       return true;
     } else if (info.type === 'files') {
       // content with mutiple files
       if (info.files.length === 1){
-        res.sendFile(info.files[0].filename);
+        res.download(info.files[0].filename);
       } else {
         var bpath = extractBasepath(info.files.map(function(f){ return f.filename; }));
 
