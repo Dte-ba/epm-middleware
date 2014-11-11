@@ -211,7 +211,7 @@ module.exports = function(ops) {
 
     function sendFile(res, filename){
       var fname = path.basename(filename);
-      fname = encodeURIComponent(filename);
+      fname = encodeURIComponent(fname);
       res.setHeader('Content-disposition', 'inline; filename="' + fname + '"');
       res.setHeader('Content-Type', mime.lookup(filename));
 
