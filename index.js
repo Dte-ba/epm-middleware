@@ -155,17 +155,15 @@ module.exports = function(ops) {
       return true;
     } else if (info.type === 'file') {
       // content || assets
-      //res.setHeader('Content-Type', mime.lookup(info.filename));
-      res.attachment(info.filename);
-      res.sendFile(info.filename);
+      sendFile(res, info.filename);
 
       return true;
     } else if (info.type === 'files') {
       // content with mutiple files
       if (info.files.length === 1){
         //res.setHeader('Content-Type', mime.lookup( info.files[0].filename) );
-        res.attachment(info.files[0].filename);
-        res.sendFile(info.files[0].filename);
+        sendFile(res, info.files[0].filename);
+        return true;
       } else {
         var bpath = extractBasepath(info.files.map(function(f){ return f.filename; }));
 
@@ -209,6 +207,15 @@ module.exports = function(ops) {
       }
 
       return true;
+    }
+
+    function sendFile(res, filename){
+      var fname = path.basename(filename);
+      fname = encodeURIComponent(filename);
+      res.setHeader('Content-disposition', 'inline; filename="' + fname + '"');
+      res.setHeader('Content-Type', mime.lookup(filename));
+
+      res.sendFile(filename);
     }
 
     return false;
