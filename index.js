@@ -30,6 +30,18 @@ module.exports = function(ops) {
 
   server = Epm.createServer(ops.path, { engines: engines });
 
+  server.on('repo.instanced', function(info){
+    console.log(info.name + ' instanced');
+    
+    info.repo.on('progress', function(){
+      console.log(info.name + ' progress');
+    });
+
+    info.repo.on('ready', function(){
+      console.log(info.name + ' ready');
+    });
+  });
+
   app.listenRepositories = function(ops, fn) {
     if (typeof ops === 'function'){
       fn = ops;
