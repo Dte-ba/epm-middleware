@@ -1,10 +1,10 @@
 {
   "name": "epm-middleware",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "An expressjs middleware for EPM",
   "main": "index.js",
   "dependencies": {
-    "epm": "latest",
+    "epm": "<1.0.0",
     "express": "^4.9.0",
     "mime": "^1.2.11",
     "mkdirp": "^0.5.0",
